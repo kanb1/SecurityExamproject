@@ -4,7 +4,7 @@ import {request, response, NextFunction} from "express";
 const router = Router()
 
 // get all books
-router.get('/book', (req, res) => {
+router.get('/book', (req: request, res: response) => {
     res.json({message: "hello"})
 })
 
