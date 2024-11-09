@@ -1,5 +1,16 @@
 import jwt from "jsonwebtoken"
 import {request, response, NextFunction} from "express";
+import bcrypt from "bcrypt"
+
+
+
+export const hashPassword = (password) => {
+    return bcrypt.hash(password, 12);
+}
+
+export const comparePasswords = (password, hashedPassword) => {
+    return bcrypt.compare(password, hashedPassword)
+}
 
 
 export const createJWT = (user) => {
