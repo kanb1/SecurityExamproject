@@ -13,7 +13,7 @@ const app = express();
 
 // CORS setup
 app.use(cors({
-    origin: ["http://localhost:3002"], // add url of prod when ready
+    origin: ["http://localhost:3002", "http://localhost:5500/frontend/src" ], // add url of prod when ready
     credentials: true,
   }));
 
