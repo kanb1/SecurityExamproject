@@ -14,36 +14,31 @@ export const comparePasswords = (password, hashedPassword) => {
 
 
 export const createJWT = (user) => {
-    const token = jwt.sign({
-        id: user.id, 
+
+     // Generate a JWT token
+     const token = jwt.sign({ 
+        userId: user.id, 
         username: user.username, 
-        role: user.role
+        role: user.role 
     }, 
-    process.env.JWT_SECRET
-)
+    process.env.JWT_SECRET, 
+    { algorithm: 'HS256', expiresIn: '1h' });
+
 return token
 
 }
 
 
 export const protect = (req: request, res: response, next) => {
-    const bearer = req.headers.authorization;
-
-    if(!bearer){
-        res.status(401);
-        res.json({message: 'not authorized'});
-        return
-    }
-
-    const [, token] = bearer.split(' ')
+    const token = req.cookies.token;
 
     if (!token){
         res.status(401);
-        res.json({message: 'not valid token'});
+        res.json({message: 'no token provided'});
     }
 
     try {
-        const user = jwt.verify(token, process.env.JWT_SECRET);
+        const user = jwt.verify(token, process.env.JWT_SECRET, {algorithms: ['HS256']});
             req.user = user
             next()
     } catch (e) {

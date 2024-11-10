@@ -5,6 +5,9 @@ import {request, response, NextFunction} from "express";
 
 
 export const createNewUser = async (req: request, res: response) => {
+
+    // add code to check if user already exists
+    
     const user = await prisma.user.create({
         data: {
             username: req.body.username,
@@ -35,6 +38,15 @@ export const signIn = async (req: request, res: response) => {
     }
 
     const token = createJWT(user)
+
+    // insert jwt token into a cookie to make it more secure
+    res.cookie('token', token, {
+        httpOnly: true,      // now javascript cannot access it
+        secure: process.env.NODE_ENV === 'production', // rely on https when in production
+        maxAge: 3600000,     // 1 hour
+        sameSite: 'Strict',  // change to lax if we want cross-site cookie usage
+    });
+
     res.json({token: token})
 
 }
