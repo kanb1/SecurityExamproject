@@ -69,4 +69,10 @@ OWASP Cheatsheet Series:
   File Uploads: https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html
   Password Storage Cheatsheet: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
   Session Management: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
+
+
+  Add rel="noopener noreferrer" to external anchor tags (links).
+  Noopener prevents access to window.opener.
+  Noreferrer strips the information about the original page (privacy)
+  
   
