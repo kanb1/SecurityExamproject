@@ -11,11 +11,12 @@ import helmet from "helmet";
 
 const app = express();
 
-// CORS setup
+const corsOrigins = process.env.CORS_ORIGINS.split(',');
+
 app.use(cors({
-    origin: ["http://localhost:3002", "http://localhost:5500/frontend/src" ], // add url of prod when ready
-    credentials: true,
-  }));
+  origin: corsOrigins,
+  credentials: true,
+}));
 
 // Helmet security headers
 app.use(
