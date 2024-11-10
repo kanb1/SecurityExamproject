@@ -9,7 +9,4 @@ updates:
     directory: "/backend" # Location of our package,json file
     schedule:
       interval: "weekly"
-  - package-ecosystem: "npm" #Tells dependabot that we use npm as the package manager 
-    directory: "/frontend"
-    schedule:
-      interval: "weekly"
+
