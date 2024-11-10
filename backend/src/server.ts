@@ -25,7 +25,7 @@ app.use(
         directives: {
           defaultSrc: ["'self'"],           // Allows resources only from the same origin
           scriptSrc: ["'self'"],  // Only allow scripts from the same origin
-          styleSrc: ["'self'", "'unsafe-inline'"],   // Allow styles from the same origin and inline styles
+          styleSrc: ["'self'"],   // Allow styles from the same origin and inline styles
           imgSrc: ["'self'", "data:"],      // Images can come from the same origin or be inline images (data URIs)
           objectSrc: ["'none'"],            // Disallow plugins, such as Flash
           frameSrc: ["'none'"],             // Disallow iframes from any source
