@@ -30,9 +30,10 @@ main{
     background-color: var(--primary-background);
 }
 
+
 /* SIGNUP FORM */
 
-#signupForm{
+#loginForm{
     width: 50%;
     height: 100%;
     min-height: 30vh;
@@ -43,14 +44,14 @@ main{
     font-family: var(--primary-font);
 }
 
-#signupForm > h1 {
+#loginForm > h1 {
     font-weight: 700;
     font-size: 3rem;
     color: white;
 
 }
 
-#signupForm > p {
+#loginForm > p {
     margin: 1rem auto;
     font-weight: 400;
     font-size: 1.5rem;
@@ -58,7 +59,7 @@ main{
 
 }
 
-#signupForm > form {
+#loginForm > form {
     width: 50%;
     min-height: 30vh;
     display: flex;
@@ -68,7 +69,7 @@ main{
     margin: 2rem auto;
 }
 
-#signupForm > form div {
+#loginForm > form div {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -114,7 +115,7 @@ button{
     align-items: flex-end;
     justify-content: flex-start;
     font-family: var(--primary-font);
-    background-image: url('../../assets/images/sign_up.jpg');
+    background-image: url('../../assets/images/log_in.jpg');
     background-position: bottom;
     background-repeat: no-repeat;
     background-size: cover;
