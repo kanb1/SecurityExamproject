@@ -12,8 +12,6 @@
         <nav>
             Logo
             <ul>
-                <li><a href="#">Log in</a></li>
-                <li><a href="./signup.html">Sign up</a></li>
                 <li><a href="#">Documentation</a></li>
             </ul>
         </nav>
@@ -23,15 +21,35 @@
         <section id="mainText">
             <h1>Build your ideal library online</h1>
             <p>Get access to thousands of books.</p>
-
-            <div id="buttonsDiv">
-                <button id="loginButton">Log in</button>
-                <button id="signupButton">Sign up</button>
-            </div>
-
         </section>
-        <section id="itemGrid">
+        <section id="signupForm">
+            <h1>Sign up</h1>
+            <p>Already have a account? <a href="./login.html"><em>Log in</em></a></p>
+            <form action="">
+                <div>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Username" required>
+                </div>
 
+                <div>
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" placeholder="Email" required>
+                </div>
+
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="********" required>
+                </div>
+
+                <div>
+                    <label for="repeat_password">Repeat password</label>
+                    <input type="password" id="repeat_password" name="Repeat password" placeholder="********" required>
+                </div>
+
+                <button class="signUpButton" type="submit">Create account</button>
+
+                
+            </form>
         </section>
     </main>
     <footer>
