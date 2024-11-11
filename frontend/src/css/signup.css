@@ -1,0 +1,131 @@
+@import "./fonts.css";
+
+*{
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root{
+    --primary-font: 'Karla', sans-serif;
+    --primary-background: #2B2738;
+}
+
+a{
+    color: inherit;
+    text-decoration: none;
+}
+
+/* MAIN */
+/* MAIN */
+/* MAIN */
+
+main{
+    width: 100vw;
+    height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-background);
+}
+
+/* SIGNUP FORM */
+
+#signupForm{
+    width: 50%;
+    height: 100%;
+    min-height: 30vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--primary-font);
+}
+
+#signupForm > h1 {
+    font-weight: 700;
+    font-size: 3rem;
+    color: white;
+
+}
+
+#signupForm > p {
+    margin: 1rem auto;
+    font-weight: 400;
+    font-size: 1.5rem;
+    color: white;
+
+}
+
+#signupForm > form {
+    width: 50%;
+    min-height: 30vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
+    margin: 2rem auto;
+}
+
+#signupForm > form div {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+label{
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0.5rem 1rem 0.5rem 0;
+    color: white;
+    width: 40%;
+}
+
+input{
+    width: 60%;
+    height: 2rem;
+    color: gray;
+}
+
+button{
+    width: 100%;
+    height: 3rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin: 1rem auto;
+}
+
+/* LEFT PANEL */
+
+#leftPanel{
+    width: 50%;
+    min-height: 30vh;
+    height: 95%;
+    border-radius: 20px;
+    margin: 1rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    font-family: var(--primary-font);
+    background-image: url('../../assets/images/book_cover.jpg');
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-size: auto;
+    color: white;
+    border: 3px solid white;
+}
+
+.backToHomepage{
+    padding: 1rem;
+    background-color: var(--primary-background);
+    border-radius: 20px;
+}
+
