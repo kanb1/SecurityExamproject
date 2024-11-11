@@ -1,0 +1,119 @@
+@import "./fonts.css";
+
+*{
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root{
+    --primary-font: 'Karla', sans-serif;
+}
+
+/* HEADER */
+/* HEADER */
+/* HEADER */
+
+header{
+    width: 100vw;
+    height: 20vh;
+}
+
+header > nav {
+    width: 90%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+header > nav > ul {
+    width: 60%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+header > nav > ul li {
+    list-style-type: none;
+}
+
+header > nav > ul li a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+/* MAIN */
+/* MAIN */
+/* MAIN */
+
+/* MAIN TEXT */
+
+#mainText{
+    width: 90vw;
+    min-height: 30vh;
+    margin: 0 auto;
+    border: 5px solid green;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--primary-font);
+}
+
+#mainText > h1 {
+    font-weight: 700;
+    font-size: 3rem;
+}
+
+#mainText > p {
+    margin: 1rem auto;
+    font-weight: 400;
+    font-size: 1.5rem;
+}
+
+#buttonsDiv{
+    width: 90vw;
+    height: 10vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#loginButton{
+    border: none;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    min-width: 100px;
+    margin: 0 1rem 0 0;
+}
+
+#signupButton{
+    border: none;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    min-width: 100px;
+    margin: 0 0 0 1rem;
+
+}
+
+/* BOOK GRID */
+
+#itemGrid{
+    width: 90vw;
+    min-height: 80vh;
+    margin: 0 auto;
+    border: 5px solid red;
+}
+
+
