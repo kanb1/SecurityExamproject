@@ -48,5 +48,5 @@ export const signIn = async (req: request, res: response) => {
     });
 
     res.json({token: token})
-
+    
 }

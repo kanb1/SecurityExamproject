@@ -8,6 +8,8 @@ import {createNewUser, signIn} from "./handlers/user"
 import cookieParser from 'cookie-parser';
 import helmet from "helmet";
 
+import fetchArt from "../prisma/seed";
+
 
 const app = express();
 
@@ -64,8 +66,14 @@ app.use(cookieParser());
 
 
 
-app.get('/', (req: request, res: response) => {
-    res.json({message: "sup, this is the security exam project. its very safe"})
+app.get('/', async (req: request, res: response) => {
+  try {
+    const artworks = await fetchArt();
+    res.json(artworks); // Directly return the fetched artworks in the response
+  } catch (error) {
+    console.error("Error fetching artwork:", error);
+    res.status(500).json({ error: "Failed to fetch artwork" });
+  }
 });
 
 app.use('/api', protect, router)
