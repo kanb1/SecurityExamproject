@@ -25,30 +25,40 @@
         <section id="signupForm">
             <h1>Sign up</h1>
             <p>Already have a account? <a href="./login.html"><em>Log in</em></a></p>
-            <form action="">
+            <form action="/signup" method="POST" id="signUpForm">
                 <div>
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Username" required>
+                    <div class="label_and_input_div">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Username" required>
+                    </div>
+                    <span class="error-message" id="username-error"></span>
                 </div>
-
+            
                 <div>
-                    <label for="email">Email</label>
-                    <input type="text" id="email" name="email" placeholder="Email" required>
+                    <div class="label_and_input_div">
+                        <label for="email">Email</label>
+                        <input type="text" id="email" name="email" placeholder="Email" required>
+                    </div>
+                    <span class="error-message" id="email-error"></span>
                 </div>
-
+            
                 <div>
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="********" required>
+                    <div class="label_and_input_div">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="********" required>
+                    </div>
+                    <span class="error-message" id="password-error"></span>
                 </div>
-
+            
                 <div>
-                    <label for="repeat_password">Repeat password</label>
-                    <input type="password" id="repeat_password" name="Repeat password" placeholder="********" required>
+                    <div class="label_and_input_div">
+                        <label for="repeat_password">Repeat password</label>
+                        <input type="password" id="repeat_password" name="repeat_password" placeholder="********" required>
+                    </div>
+                    <span class="error-message" id="repeat-password-error"></span>
                 </div>
-
+            
                 <button class="signUpButton" type="submit">Create account</button>
-
-                
             </form>
         </section>
     </main>

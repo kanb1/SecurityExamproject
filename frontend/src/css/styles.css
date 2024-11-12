@@ -17,6 +17,7 @@
     --button-hover: #5BA77A; 
     --button-text: #FFFFFF; 
     --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    --error-message: red;
 
 }
 
@@ -171,7 +172,7 @@ main{
 #signupForm > form div {
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: flex-start;
     justify-content: center;
 }
@@ -214,4 +215,24 @@ input{
     background-color: var(--button-hover);
     transform: translateY(-2px); 
 
+}
+
+/* Error message styling */
+.error-message {
+    color: red; /* For visibility, use red directly for now */
+    display: block; /* Ensures it appears on a new line */
+    margin-top: 0px; /* Adds spacing between input and error message */
+    font-size: 0.8rem; /* Adjust font size if needed */
+    visibility: hidden; /* Hide initially; show when error is set */
+}
+
+/* This class will be added dynamically to show errors */
+.show-error {
+    visibility: visible; /* Shows error message when set */
+}
+
+/* Optional: Adjust input spacing */
+.label_and_input_div {
+    width: 100%;
+    display: block;
 }
