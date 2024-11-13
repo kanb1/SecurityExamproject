@@ -7,7 +7,6 @@ import {protect} from "./modules/auth"
 import {createNewUser, signIn, checkEmailExists, storeUserInDatabase} from "./handlers/user"
 import cookieParser from 'cookie-parser';
 import helmet from "helmet";
-import { body, validationResult } from 'express-validator';
 
 
 import fetchArt from "../prisma/seed";

@@ -59,20 +59,8 @@ async function signUp(event) {
             document.getElementById('email-already-exists-error').textContent = result.message;
             document.getElementById('email-already-exists-error').classList.add('show-error');
             return;
-        }
-
-        const result = await response.json();
-
-        if (response.status === 201) {
-            // Alert the user about success
+        } else{
             alert(result.message);
-
-            // Redirect to login page
-            window.location.href = './login.html';
-        } else {
-            // Handle errors (e.g., email already exists)
-            document.getElementById('email-already-exists-error').textContent = result.message;
-            document.getElementById('email-already-exists-error').classList.add('show-error');
         }
 
     } catch (error) {
