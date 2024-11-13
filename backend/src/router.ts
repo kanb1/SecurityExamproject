@@ -2,8 +2,12 @@ import {Router} from "express"
 import {request, response, NextFunction} from "express";
 import {body, validationResult} from "express-validator";
 import {handleInputErrors} from "./modules/middleware";
+import { checkEmailExists } from "./handlers/user";
+
 
 const router = Router()
+
+
 
 // get all books
 router.get('/book', (req: request, res: response) => {

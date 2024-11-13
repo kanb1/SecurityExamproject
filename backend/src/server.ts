@@ -4,7 +4,7 @@ import router from "./router";
 import morgan from "morgan";
 import cors from "cors";
 import {protect} from "./modules/auth"
-import {createNewUser, signIn, signUp} from "./handlers/user"
+import {createNewUser, signIn, signUp, checkEmailExists} from "./handlers/user"
 import cookieParser from 'cookie-parser';
 import helmet from "helmet";
 
@@ -69,17 +69,19 @@ app.use(cookieParser());
 app.get('/', async (req: request, res: response) => {
   try {
     const artworks = await fetchArt();
-    res.json(artworks); // Directly return the fetched artworks in the response
   } catch (error) {
     console.error("Error fetching artwork:", error);
     res.status(500).json({ error: "Failed to fetch artwork" });
   }
 });
 
-app.use('/api', protect, router)
+app.use('/api', router)
 app.post('/user', createNewUser)
 app.post('/signin', signIn)
 
 app.post('/signup', signUp)
+
+// check if email exists
+app.post("/check-email", checkEmailExists);
 
 export default app;

@@ -4,10 +4,6 @@ import {request, response, NextFunction} from "express";
 import sanitizeInput from "../utils/sanitize_input"
 
 
-
-
-
-
 export const signUp = async (req: request, res: response) => {
     try {
         // get information the user has written in the inputs
@@ -113,3 +109,24 @@ export const signIn = async (req: request, res: response) => {
     res.json({token: token})
     
 }
+
+// check if email is already in database
+
+export const checkEmailExists = async (req: request, res: response) => {
+    const email = req.body.email;
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: email }
+        });
+
+        if (user) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+
+        res.status(200).json({ message: "Email is available" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
