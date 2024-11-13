@@ -4,64 +4,6 @@ import {request, response, NextFunction} from "express";
 import sanitizeInput from "../utils/sanitize_input"
 
 
-export const signUp = async (req: request, res: response) => {
-    try {
-        // get information the user has written in the inputs
-        const {username, email, password, repeat_password} = req.body;
-
-        // check that the input fields are not empty
-        if (!username || !email || !password || !repeat_password) {
-            return res.status(400).json({message: "Please fill in all fields"});
-        }
-
-        // sanitize all iputs
-        const sanitizedUsername = sanitizeInput(username.trim());
-        const sanitizedEmail = sanitizeInput(email.trim());
-        const sanitizedPassword = sanitizeInput(password.trim());
-        const sanitizedRepeatPassword = sanitizeInput(repeat_password.trim());
-
-        // check that the email is valid
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if (!emailPattern.test(sanitizedEmail)) {
-            return res.status(400).json({message: "Please provide a valid email address"});
-        }
-
-
-        // check if the password and repeat password are the same
-        if (password !== repeat_password) {
-            return res.status(400).json({message: "Passwords do not match"});
-        }
-
-        // enforce password constraints
-        const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$/;
-        if (!passwordPattern.test(sanitizedPassword)) {
-            return res.status(400).json({
-                message: "Password must contain at least 8 characters, including one uppercase letter, one number, and one special character."
-            });
-        }
-        
-        // check that the username is valid
-        const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-        if (!usernameRegex.test(username)) {
-            return res.status(400).json({message: "Invalid username"});
-        }
-
-        // limit character length to avoid buffer overflow attacks
-        const MAX_LENGTH = 30; // Adjust as needed
-        if (sanitizedUsername.length > MAX_LENGTH || sanitizedEmail.length > MAX_LENGTH) {
-            return res.status(400).json({message: "Input exceeds maximum allowed length"});
-        }
-
-            // if all of this amazingly works out..
-
-
-    } catch (error){
-        console.log(error)
-    }
-}
-
-
 
 export const createNewUser = async (req: request, res: response) => {
 
@@ -112,7 +54,7 @@ export const signIn = async (req: request, res: response) => {
 
 // check if email is already in database
 
-export const checkEmailExists = async (req: request, res: response) => {
+export const checkEmailExists = async (req: request, res: response, next) => {
     const email = req.body.email;
 
     try {
@@ -121,10 +63,35 @@ export const checkEmailExists = async (req: request, res: response) => {
         });
 
         if (user) {
-            return res.status(400).json({ message: "Email already exists" });
+            return res.status(400).json({ message: "Email already exists. Log in." });
         }
 
-        res.status(200).json({ message: "Email is available" });
+        // Proceed to the next middleware "storeUserInDatabase" if email is available
+        next();
+
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// check if email is already in database
+
+export const storeUserInDatabase = async (req: request, res: response, next) => {
+    try {
+        const storeNewUser = await prisma.user.create({
+            data: {
+                username: req.body.username,
+                email: req.body.email,
+                password: await hashPassword(req.body.password)
+            }
+        })
+    
+        // Respond with a success message
+        return res.status(201).json({ message: "User created successfully. Please log in to continue." });
+
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });

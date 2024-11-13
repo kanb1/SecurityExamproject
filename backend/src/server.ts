@@ -4,9 +4,11 @@ import router from "./router";
 import morgan from "morgan";
 import cors from "cors";
 import {protect} from "./modules/auth"
-import {createNewUser, signIn, signUp, checkEmailExists} from "./handlers/user"
+import {createNewUser, signIn, checkEmailExists, storeUserInDatabase} from "./handlers/user"
 import cookieParser from 'cookie-parser';
 import helmet from "helmet";
+import { body, validationResult } from 'express-validator';
+
 
 import fetchArt from "../prisma/seed";
 
@@ -79,9 +81,7 @@ app.use('/api', router)
 app.post('/user', createNewUser)
 app.post('/signin', signIn)
 
-app.post('/signup', signUp)
-
 // check if email exists
-app.post("/check-email", checkEmailExists);
+app.post("/signup", checkEmailExists, storeUserInDatabase);
 
 export default app;

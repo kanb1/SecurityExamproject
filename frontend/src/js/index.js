@@ -31,22 +31,6 @@ async function signUp(event) {
             return;
         }
 
-        console.log("Sending email:", email);
-        const response = await fetch('http://localhost:3002/check-email', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email })
-        });
-
-        const result = await response.json();
-        if (response.status !== 200) {
-            document.getElementById('email-already-exists-error').textContent = result.message;
-            document.getElementById('email-already-exists-error').classList.add('show-error');
-            return;
-        }
-
         if (password !== repeat_password) {
             document.getElementById('repeat-password-error').textContent = 'Passwords do not match';
             document.getElementById('repeat-password-error').classList.add('show-error');
@@ -60,8 +44,36 @@ async function signUp(event) {
             return;
         }
 
-        // If all checks pass, form is valid
-        console.log("Form is valid!");
+        // send user to endpoint
+        // if email already exists, "checkEmailExists" will return an error message
+        const response = await fetch('http://localhost:3002/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, email, password})
+        });
+
+        const result = await response.json();
+        if (response.status !== 201) {
+            document.getElementById('email-already-exists-error').textContent = result.message;
+            document.getElementById('email-already-exists-error').classList.add('show-error');
+            return;
+        }
+
+        const result = await response.json();
+
+        if (response.status === 201) {
+            // Alert the user about success
+            alert(result.message);
+
+            // Redirect to login page
+            window.location.href = './login.html';
+        } else {
+            // Handle errors (e.g., email already exists)
+            document.getElementById('email-already-exists-error').textContent = result.message;
+            document.getElementById('email-already-exists-error').classList.add('show-error');
+        }
 
     } catch (error) {
         console.error(error);

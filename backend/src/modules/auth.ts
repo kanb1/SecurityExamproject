@@ -5,7 +5,8 @@ import bcrypt from "bcrypt"
 
 
 export const hashPassword = (password) => {
-    return bcrypt.hash(password, 12);
+    const salt = bcrypt.genSaltSync(12);
+    return bcrypt.hashSync(password, salt);
 }
 
 export const comparePasswords = (password, hashedPassword) => {
