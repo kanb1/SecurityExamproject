@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="./css/login.css">
+    <script src="./js/login.js" defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log in</title>
@@ -17,22 +18,22 @@
         <section id="loginForm">
             <h1>Log in</h1>
             <p>Don't have an account? <a href="./signup.html">Sign up</a></p>
-            <form action="">
-                
+            <form action="/login" method="POST" id="logInForm">
                 <div>
                     <label for="email">Email</label>
                     <input type="text" id="email" name="email" placeholder="Email" required>
+                    <span class="error-message" id="email-error"></span>
                 </div>
-
+            
                 <div>
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" placeholder="********" required>
+                    <span class="error-message" id="password-error"></span>
                 </div>
-
+            
                 <button type="submit">Log in</button>
-
-                
             </form>
+
         </section>
 
     </main>
