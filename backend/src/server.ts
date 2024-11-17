@@ -9,7 +9,7 @@ import cookieParser from 'cookie-parser';
 import helmet from "helmet";
 
 
-import fetchArt from "../prisma/seed";
+import {fetchArt} from "../prisma/seed";
 
 
 const app = express();
@@ -70,6 +70,7 @@ app.use(cookieParser());
 app.get('/', async (req: request, res: response) => {
   try {
     const artworks = await fetchArt();
+    res.json(artworks);
   } catch (error) {
     console.error("Error fetching artwork:", error);
     res.status(500).json({ error: "Failed to fetch artwork" });

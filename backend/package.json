@@ -19,7 +19,9 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
-  "scripts": {
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },  "scripts": {
     "dev": "nodemon src/index.ts"
   }
 }
