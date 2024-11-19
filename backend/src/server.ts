@@ -5,6 +5,7 @@ import morgan from "morgan";
 import cors from "cors";
 import {protect} from "./modules/auth"
 import {createNewUser, logIn, checkEmailExists, storeUserInDatabase} from "./handlers/user"
+import {artworksAreFetchedFromDB} from "./handlers/art"
 import cookieParser from 'cookie-parser';
 import helmet from "helmet";
 
@@ -66,6 +67,14 @@ app.use(express.urlencoded({extended: true}))
 app.use(cookieParser());
 
 
+app.use('/api', router)
+app.post('/user', createNewUser)
+
+// we are currently only using these routes below
+// we are currently only using these routes below
+// we are currently only using these routes below
+
+// this seeds the db with artwork (we should add an admin and stop seeding every time we start the server)
 
 app.get('/', async (req: request, res: response) => {
   try {
@@ -77,11 +86,14 @@ app.get('/', async (req: request, res: response) => {
   }
 });
 
-app.use('/api', router)
-app.post('/user', createNewUser)
+// this checks if email exists while creating a new user
+app.post("/signup", checkEmailExists, storeUserInDatabase);
+
+
+// this logs in the user
 app.post('/login', logIn)
 
-// check if email exists
-app.post("/signup", checkEmailExists, storeUserInDatabase);
+// this fetches the artworks from the db to show them in the dashboard
+app.get('/artworks', artworksAreFetchedFromDB);
 
 export default app;
