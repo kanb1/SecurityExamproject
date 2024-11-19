@@ -41,12 +41,12 @@ export const logIn = async (req: request, res: response) => {
       }
   
       // check if password is valid
-      const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).{8,}$/;
-      if (!passwordPattern.test(password)) {
-        return res.status(400).json({
-          error: 'Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character',
-        });
-      }
+     // const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).{8,}$/;
+     // if (!passwordPattern.test(password)) {
+     //   return res.status(400).json({
+     //     error: 'Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character',
+     //   });
+     // }
       
       // check if user exists
       const user = await prisma.user.findUnique({ where: { email } });
@@ -72,6 +72,7 @@ export const logIn = async (req: request, res: response) => {
       });
       
       res.json({
+        redirect: '/frontend/src/dashboard.html',
         user: {
           id: user.id,
           username: user.username,
@@ -129,3 +130,14 @@ export const storeUserInDatabase = async (req: request, res: response, next) => 
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+// return a list of all users
+export const getAllUsers = async (req: request, res: response) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
+}

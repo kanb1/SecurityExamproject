@@ -29,11 +29,11 @@ async function logIn(event) {
         }
 
         // Validate password
-        const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).{8,}$/;
-        if (!passwordPattern.test(password)) {
-            showError('password', 'Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character');
-            return;
-        }
+       // const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).{8,}$/;
+       // if (!passwordPattern.test(password)) {
+       //     showError('password', 'Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character');
+       //     return;
+       // }
 
         // Send login data to the backend
         const response = await fetch('http://localhost:3002/login', {
@@ -51,9 +51,15 @@ async function logIn(event) {
             return;
         }
 
-        // Handle successful login
-        alert('Login successful!');
-        window.location.href = 'dashboard.html'; // Redirect to the dashboard
+        if (response.status === 200) {
+            const { user, redirect } = result;
+        
+            // Save user details securely in sessionStorage
+            sessionStorage.setItem('user', JSON.stringify(user));
+        
+            // Redirect to the dashboard
+            window.location.href = redirect;
+        }
     } catch (error) {
         console.error('Error during login:', error);
         alert('An unexpected error occurred. Please try again.');

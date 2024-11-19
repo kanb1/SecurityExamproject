@@ -4,7 +4,7 @@ import router from "./router";
 import morgan from "morgan";
 import cors from "cors";
 import {protect} from "./modules/auth"
-import {createNewUser, logIn, checkEmailExists, storeUserInDatabase} from "./handlers/user"
+import {createNewUser, logIn, checkEmailExists, storeUserInDatabase, getAllUsers} from "./handlers/user"
 import {artworksAreFetchedFromDB} from "./handlers/art"
 import cookieParser from 'cookie-parser';
 import helmet from "helmet";
@@ -68,7 +68,6 @@ app.use(cookieParser());
 
 
 app.use('/api', router)
-app.post('/user', createNewUser)
 
 // we are currently only using these routes below
 // we are currently only using these routes below
@@ -89,11 +88,17 @@ app.get('/', async (req: request, res: response) => {
 // this checks if email exists while creating a new user
 app.post("/signup", checkEmailExists, storeUserInDatabase);
 
+// this creates a new user when the above request is successful
+app.post('/user', createNewUser)
+
 
 // this logs in the user
 app.post('/login', logIn)
 
-// this fetches the artworks from the db to show them in the dashboard
+// this fetches the artworks from the db to show them in the dashboard if the user is just a user
 app.get('/artworks', artworksAreFetchedFromDB);
+
+// this fetches a list of all the users if the user is an admin
+app.get('/users', protect, getAllUsers)
 
 export default app;
