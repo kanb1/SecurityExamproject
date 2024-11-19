@@ -1,13 +1,13 @@
 import prisma from "../db"
 import {createJWT, hashPassword, comparePasswords} from "../modules/auth"
-import {request, response, NextFunction} from "express";
+import {Request, Response, NextFunction} from "express";
 import sanitizeInput from "../utils/sanitize_input"
 import bcrypt from "bcrypt"
 
 
 
 
-export const createNewUser = async (req: request, res: response) => {
+export const createNewUser = async (req: Request, res: Response) => {
 
     // add code to check if user already exists
     
@@ -24,41 +24,46 @@ export const createNewUser = async (req: request, res: response) => {
 }
 
 
-export const logIn = async (req: request, res: response) => {
+export const logIn = async (req: Request, res: Response) => {
     const { email, password } = req.body;
   
     try {
   
       // check if body is empty
       if (!email || !password) {
-        return res.status(400).json({ error: 'All fields are required' });
+        res.status(400).json({ error: 'All fields are required' });
+        return;
       }
   
       // check if email is valid
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(email)) {
-        return res.status(400).json({ error: 'Invalid email format' });
+        res.status(400).json({ error: 'Invalid email format' });
+        return;
       }
   
       // check if password is valid
       const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).{8,}$/;
       if (!passwordPattern.test(password)) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character',
         });
+        return;
       }
       
       // check if user exists
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
       //  return res.status(400).json({ error: 'Invalid email or password' });
-        return res.status(400).json({ error: 'Invalid email' });
+        res.status(400).json({ error: 'Invalid email' });
+        return;
       }
   
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
        // return res.status(400).json({ error: 'Invalid email or password' });
-        return res.status(400).json({ error: 'Invalid password' });
+        res.status(400).json({ error: 'Invalid password' });
+        return;
       }
 
       const token = createJWT(user)
@@ -68,7 +73,7 @@ export const logIn = async (req: request, res: response) => {
         httpOnly: true,      // now javascript cannot access it
         secure: process.env.NODE_ENV === 'production', // rely on https when in production
         maxAge: 3600000,     // 1 hour
-        sameSite: 'Strict',  // change to lax if we want cross-site cookie usage
+        sameSite: 'strict',  // change to lax if we want cross-site cookie usage
       });
       
       res.json({
@@ -86,21 +91,21 @@ export const logIn = async (req: request, res: response) => {
 
 // check if email is already in database
 
-export const checkEmailExists = async (req: request, res: response, next) => {
+export const checkEmailExists = async (req: Request, res: Response, _next: NextFunction) => {
     const email = req.body.email;
 
     try {
         const user = await prisma.user.findUnique({
-            where: { email: email }
+            where: { email: email },
         });
 
         if (user) {
-            return res.status(400).json({ message: "Email already exists. Log in." });
+            res.status(400).json({ message: "Email already exists. Log in." });
+            return;
         }
 
-        // Proceed to the next middleware "storeUserInDatabase" if email is available
-        next();
-
+    // Proceed to the next middleware if email does not exist
+    _next();
 
     } catch (error) {
         console.error(error);
@@ -109,20 +114,22 @@ export const checkEmailExists = async (req: request, res: response, next) => {
 };
 
 // check if email is already in database
+// Added return AFTER each res.status(...).json to ensure no further code executes after sending a response - just to avoid the werid behavior
+// added _next: NextFunction because TS expected more strictness
 
-export const storeUserInDatabase = async (req: request, res: response, next) => {
+export const storeUserInDatabase = async (req: Request, res: Response, _next: NextFunction) => {
     try {
         const storeNewUser = await prisma.user.create({
             data: {
                 username: req.body.username,
                 email: req.body.email,
-                password: await hashPassword(req.body.password)
-            }
-        })
+                password: await hashPassword(req.body.password),
+            },
+        });
     
         // Respond with a success message
-        return res.status(201).json({ message: "User created successfully. Please log in to continue." });
-
+        res.status(201).json({ message: "User created successfully. Please log in to continue." });
+        return;
 
     } catch (error) {
         console.error(error);

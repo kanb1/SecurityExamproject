@@ -41,7 +41,15 @@ header{
     background-color: var(--header-background);
     color: var(--text-color);
     font-family: var(--primary-font);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    box-shadow: var(--box-shadow);
+    
 }
+
+
 
 header > nav {
     width: 90%;
@@ -60,6 +68,7 @@ header > nav > ul {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: 1.5rem;
 }
 
 header > nav > ul li {
@@ -68,7 +77,9 @@ header > nav > ul li {
 
 header > nav > ul li a {
     text-decoration: none;
-    color: inherit;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 header > nav > ul li a:hover {
