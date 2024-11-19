@@ -1,10 +1,11 @@
 import express from "express";
+import prisma from "./db"
 import {request, response, NextFunction} from "express";
 import router from "./router";
 import morgan from "morgan";
 import cors from "cors";
-import {protect} from "./modules/auth"
-import {createNewUser, logIn, checkEmailExists, storeUserInDatabase, getAllUsers} from "./handlers/user"
+import {protect, adminOnly} from "./modules/auth"
+import {createNewUser, logIn, checkEmailExists, storeUserInDatabase} from "./handlers/user"
 import {artworksAreFetchedFromDB} from "./handlers/art"
 import cookieParser from 'cookie-parser';
 import helmet from "helmet";
@@ -28,29 +29,24 @@ app.use(
       // Content Security Policy (CSP) restricts sources of content like scripts, styles, and images
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'"],           // Allows resources only from the same origin
-          scriptSrc: ["'self'"],  // Only allow scripts from the same origin
-          styleSrc: ["'self'"],   // Allow styles from the same origin and inline styles
-          imgSrc: ["'self'", "data:"],      // Images can come from the same origin or be inline images (data URIs)
-          objectSrc: ["'none'"],            // Disallow plugins, such as Flash
-          frameSrc: ["'none'"],             // Disallow iframes from any source
+          defaultSrc: ["'self'", "http://localhost:5500"],  // Allow frontend domain
+          scriptSrc: ["'self'", "http://localhost:5500"],   // Allow frontend domain for scripts
+          styleSrc: ["'self'", "http://localhost:5500"],    // Allow frontend domain for styles
+          imgSrc: ["'self'", "data:", "http://localhost:5500"],  // Allow frontend domain for images
+          objectSrc: ["'none'"],
+          frameSrc: ["'none'"],
         },
       },
   
       // HTTP Strict Transport Security (HSTS) forces HTTPS for a specified duration
       // instead of redirect 301 because the first time it will use http
-      hsts: {
-        maxAge: 31536000,                  // Sets HSTS policy duration to 1 year (in seconds)
-        includeSubDomains: true,           // Apply HSTS to all subdomains
-      },
-  
-      // Cross-Origin Opener Policy (COOP) protects against cross-origin attacks 
-      // prevents new tabs and new windows to "go back"
-      crossOriginOpenerPolicy: { policy: "same-origin" },  // Only allows pages from the same origin to share context
-  
-      // Cross-Origin Resource Policy (CORP) restricts resource sharing to same-origin
-      // domain, protocol and port have to match exactly
-      crossOriginResourcePolicy: { policy: "same-origin" }, // Only allow resources to be loaded from the same origin
+     // hsts: {
+     //   maxAge: 31536000,                  // Sets HSTS policy duration to 1 year (in seconds)
+     //   includeSubDomains: true,           // Apply HSTS to all subdomains
+     // },
+     hsts: false, //for development purposes
+      crossOriginOpenerPolicy: { policy: "unsafe-none" },
+      crossOriginResourcePolicy: { policy: "cross-origin" }
     })
   );
 
@@ -98,7 +94,21 @@ app.post('/login', logIn)
 // this fetches the artworks from the db to show them in the dashboard if the user is just a user
 app.get('/artworks', artworksAreFetchedFromDB);
 
-// this fetches a list of all the users if the user is an admin
-app.get('/users', protect, getAllUsers)
+// check user role when accessing the dashboard
+app.get('/dashboard', protect, (req, res) => {
+  const { id, username, role } = req.user;
+
+  // Return the user's details for the frontend to handle
+  res.json({ id, username, role });
+});
+
+app.get('/admin/users', protect, adminOnly, async (req, res) => {
+  try {
+      const users = await prisma.user.findMany();
+      res.json(users);
+  } catch (error) {
+      res.status(500).json({ message: 'Error fetching users' });
+  }
+});
 
 export default app;

@@ -66,9 +66,9 @@ export const logIn = async (req: request, res: response) => {
       // insert jwt token into a cookie to make it more secure
       res.cookie('token', token, {
         httpOnly: true,      // now javascript cannot access it
-        secure: process.env.NODE_ENV === 'production', // rely on https when in production
-        maxAge: 3600000,     // 1 hour
-        sameSite: 'Strict',  // change to lax if we want cross-site cookie usage
+        secure: true,// process.env.NODE_ENV === 'production', // rely on https when in production
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours for testing
+        sameSite: 'None',  // change to lax if we want cross-site cookie usage // backend and frontend have different ports
       });
       
       res.json({
@@ -131,13 +131,3 @@ export const storeUserInDatabase = async (req: request, res: response, next) => 
     }
 };
 
-// return a list of all users
-export const getAllUsers = async (req: request, res: response) => {
-  try {
-    const users = await prisma.user.findMany();
-    res.json(users);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to fetch users" });
-  }
-}

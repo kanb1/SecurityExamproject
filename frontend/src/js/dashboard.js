@@ -1,22 +1,27 @@
 "use strict";
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Retrieve the user from sessionStorage
-    const user = JSON.parse(sessionStorage.getItem('user'));
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Fetch user data securely from the server
+        const response = await fetch('http://localhost:3002/dashboard', { credentials: 'include' });
 
-    if (!user) {
-        // Redirect to login if no user is stored
-        window.location.href = 'login.html';
-        return;
-    }
+        if (!response.ok) {
+            window.location.href = 'login.html';
+            return;
+        }
 
-    // Show admin-specific functionality
-    if (user.role === 'ADMIN') {
-        const adminParagraph = document.querySelector('.adminReference');
-        adminParagraph.textContent = `Welcome, admin god, ${user.username}!`;
-    } else {
+        const user = await response.json();
+
+        // Show role-specific functionality
         const userParagraph = document.querySelector('.userReference');
-        userParagraph.textContent = `Welcome, user peasant, ${user.username}!`;
+        userParagraph.textContent = `Welcome, ${user.role === 'ADMIN' ? 'admin god' : 'user peasant'}, ${user.username}!`;
+
+        if (user.role === 'ADMIN') {
+            fetchUsers(); // Fetch users only if admin
+        }
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        window.location.href = 'login.html';
     }
 });
 
@@ -62,7 +67,8 @@ async function fetchArtworks() {
 
 async function fetchUsers() {
     try {
-        const response = await fetch('http://localhost:3002/users', {
+        const response = await fetch('http://localhost:3002/admin/users', { credentials: 'include' },
+            {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,14 +79,12 @@ async function fetchUsers() {
         }
         const users = await response.json();
         // Display users
-        const usersContainer = document.getElementById('usersContainer');
-        usersContainer.innerHTML = '';
+        const usersContainer = document.querySelector('.userList');
         users.forEach(user => {
-            const userElement = document.createElement('div');
+            const userElement = document.createElement('li');
             userElement.classList.add('user');
-            userElement.innerHTML = `
-                <h3>Username: ${user.username}</h3>
-                <p>Email: ${user.email}</p>
+            userElement.textContent = `
+                Username: ${user.username} - Email:  ${user.email} - Role: ${user.role}
             `;
             usersContainer.appendChild(userElement);
         });
@@ -91,9 +95,3 @@ async function fetchUsers() {
 }
 
 
-
-
-
-window.addEventListener("DOMContentLoaded", () => {
-   // fetchArtworks();
-})

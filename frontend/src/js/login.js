@@ -41,7 +41,8 @@ async function logIn(event) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password }),
+            credentials: 'include', // Ensure cookies are sent
         });
 
         const result = await response.json();
@@ -52,10 +53,7 @@ async function logIn(event) {
         }
 
         if (response.status === 200) {
-            const { user, redirect } = result;
-        
-            // Save user details securely in sessionStorage
-            sessionStorage.setItem('user', JSON.stringify(user));
+            const { redirect } = result;
         
             // Redirect to the dashboard
             window.location.href = redirect;

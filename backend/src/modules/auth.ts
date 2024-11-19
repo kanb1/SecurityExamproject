@@ -33,32 +33,31 @@ return token
 export const protect = (req: request, res: response, next) => {
     const token = req.cookies.token; // Raw token from the cookie
 
+
     if (!token) {
-        res.status(401).json({ message: 'No token provided' });
-        return; 
+        return res.status(401).json({ message: 'No token provided' });
     }
 
     try {
         // Verify and decode the token
         const user = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
 
-        // check if the token is valid
         if (!user) {
-            res.status(401).json({ message: 'Invalid token' });
-            return; 
-        }
-
-        // Check if the user has the correct role
-        if (user.role !== 'ADMIN') {
-            res.status(403).json({ message: 'You are not allowed to see this page' });
-            return; 
+            return res.status(401).json({ message: 'Invalid token' });
         }
 
         // Attach the user payload to the request for further use
         req.user = user;
         next();
-    } catch (e) {
-        console.error(e);
-        res.status(401).json({ message: 'Invalid token' });
+    } catch (error) {
+        console.error(error);
+        return res.status(401).json({ message: 'Invalid token' });
     }
+};
+
+export const adminOnly = (req, res, next) => {
+    if (req.user.role !== 'ADMIN') {
+        return res.status(403).json({ message: 'You are not allowed to access this page' });
+    }
+    next();
 };
