@@ -1,9 +1,13 @@
 import axios from 'axios';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+
 
 const prisma = new PrismaClient();
 
 const smkApi = process.env.SMK_API;
+
+const adminPassword = process.env.ADMIN_PASSWORD;
 
 // interface ArtworkItem {
 //     object_number: string;
@@ -19,6 +23,23 @@ export const fetchArt = async () => {
         if (!smkApi) {
             throw new Error('SMK_API environment variable is not set.');
         }
+
+        // Check if the admin user exists, if not create it
+        const existingAdmin = await prisma.user.findUnique({
+            where: { email: 'admin@admin.com' },
+          });
+          
+          if (!existingAdmin) {
+            const hashedPassword = await bcrypt.hash(adminPassword, 12);
+            await prisma.user.create({
+              data: {
+                username: 'admin',
+                email: 'admin@admin.com',
+                password: hashedPassword,
+                role: 'ADMIN',
+              },
+            });
+          }
 
         // Fetch data from the SMK API
         const response = await axios.get(smkApi);
