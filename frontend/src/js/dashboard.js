@@ -14,10 +14,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Show role-specific functionality
         const userParagraph = document.querySelector('.userReference');
-        userParagraph.textContent = `Welcome, ${user.role === 'ADMIN' ? 'admin god' : 'user peasant'}, ${user.username}!`;
+        userParagraph.textContent = `Welcome home, ${user.role === 'ADMIN' ? 'my god' : 'user peasant'}, ${user.username}!`;
 
         if (user.role === 'ADMIN') {
             fetchUsers(); // Fetch users only if admin
+            fetchArtworks();
         }
     } catch (error) {
         console.error('Error fetching user:', error);
@@ -43,19 +44,27 @@ async function fetchArtworks() {
         const artworks = await response.json();
 
         // Display artworks
-        const artworksContainer = document.getElementById('artworks-container');
-        artworksContainer.innerHTML = '';
+        const artworksList = document.querySelector('.artworkList');
+        artworksList.classList.add('artworkList');
 
         artworks.forEach(artwork => {
-            const artworkElement = document.createElement('div');
-            artworkElement.classList.add('artwork');
-            artworkElement.innerHTML = `
-                <img style="width: 300px; height: auto;" src="${artwork.image}" alt="${artwork.title}">
-                <h3>Title: ${artwork.title}</h3>
-                <p>Technique: ${artwork.technique}</p>
-                <p>Production: ${artwork.production_date}</p>
-            `;
-            artworksContainer.appendChild(artworkElement);
+            const artworkElement = document.createElement('li');
+            artworkElement.classList.add('artworkLi');
+            const artworkImage = document.createElement('img');
+            artworkImage.src = artwork.image;
+            const artworkTitle = document.createElement('h3');
+            artworkTitle.textContent = `${artwork.title}`;
+            const artworkTechnique = document.createElement('p');
+            artworkTechnique.textContent = `Technique: ${artwork.technique}`;
+            const artworkYear = document.createElement('p');
+            artworkYear.textContent = `Production: ${artwork.production_date}`;
+
+            artworkElement.appendChild(artworkImage)
+            artworkElement.appendChild(artworkTitle);
+            artworkElement.appendChild(artworkTechnique);
+            artworkElement.appendChild(artworkYear);
+            
+            artworksList.appendChild(artworkElement);
         });
 
     } catch (error) {
@@ -82,7 +91,7 @@ async function fetchUsers() {
         const usersContainer = document.querySelector('.userList');
         users.forEach(user => {
             const userElement = document.createElement('li');
-            userElement.classList.add('user');
+            userElement.classList.add('userLi');
             userElement.textContent = `
                 Username: ${user.username} - Email:  ${user.email} - Role: ${user.role}
             `;

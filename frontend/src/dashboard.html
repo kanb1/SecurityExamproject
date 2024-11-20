@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <script src="./js/dashboard.js" defer></script>
+    <link rel="stylesheet" href="./css/dashboard.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
@@ -10,17 +11,42 @@
 
     <main>
 
-        <!-- if user.role is ADMIN, then show a list of users -->
+        <!-- if user.role is ADMIN, then show this batch -->
         <section id="admin-container">
-            <p class="adminReference"></p>
-            <ul class="userList"></ul>
+            <div class="adminInfo">
+                <h1 class="userReference"></h1>
+            <img id="adminImg" src="../assets/images/admin.jpg" alt="Admin image">
+
+            </div>
+
+
+            <div id="adminWorlds">
+                <div class="users-div">
+                    <h2>Users</h2>
+                    <div class="scrollableDiv">
+                        <ul class="userList"></ul>
+                    </div>
+                    
+                </div>
+    
+                <div class="artworks-div">
+                    <h2>Artworks</h2>
+                    <div class="scrollableDivArtworks">
+                        <ul class="artworkList"></ul>
+                    </div>
+                   
+                </div>
+
+            </div>
+
+            
+            
            
 
         </section>
 
         <!-- if user.role is USER, then show a list of features for users -->
         <section id="user-container">
-            <p class="userReference"></p>
            
 
         </section>
