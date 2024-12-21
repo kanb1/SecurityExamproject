@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const user = await response.json();
+        console.log(user)
 
         // Show role-specific functionality
         const userParagraph = document.querySelector('.userReference');
@@ -20,11 +21,55 @@ document.addEventListener('DOMContentLoaded', async () => {
             fetchUsers(); // Fetch users only if admin
             fetchArtworks();
         }
+
+        // Dynamically update the navigation links
+        updateNavLinks();
+
     } catch (error) {
         console.error('Error fetching user:', error);
         window.location.href = 'login.html';
     }
 });
+
+// Function to log out the user
+async function logout() {
+    try {
+        // Call the backend to clear the token securely
+        const response = await fetch('http://localhost:3002/logout', { method: 'POST', credentials: 'include' });
+
+        if (response.ok) {
+            alert("Logged out successfully!");
+            window.location.href = "login.html";
+        } else {
+            alert("Logout failed. Please try again.");
+        }
+    } catch (error) {
+        console.error('Error logging out:', error);
+    }
+}
+
+// Dynamically update the navigation links
+function updateNavLinks() {
+    const navLinks = document.getElementById('nav-links');
+
+    // Create a new <li> for Logout
+    const logoutLi = document.createElement('li');
+    const logoutLink = document.createElement('a');
+    logoutLink.href = "#";
+    logoutLink.textContent = "Logout";
+    logoutLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        logout();
+    });
+
+    logoutLi.appendChild(logoutLink);
+
+    // Append the Logout link to the nav list if not already present
+    if (!document.querySelector('#nav-links a[href="#logout"]')) {
+        logoutLink.id = 'logout';
+        navLinks.appendChild(logoutLi);
+    }
+}
 
 // if user is user, fetch artworks
 

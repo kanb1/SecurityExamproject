@@ -5,7 +5,7 @@ import router from "./router";
 import morgan from "morgan";
 import cors from "cors";
 import {protect, adminOnly} from "./modules/auth"
-import {createNewUser, logIn, checkEmailExists, storeUserInDatabase} from "./handlers/user"
+import {createNewUser, logIn, logout, checkEmailExists, storeUserInDatabase} from "./handlers/user"
 import {artworksAreFetchedFromDB} from "./handlers/art"
 import cookieParser from 'cookie-parser';
 import helmet from "helmet";
@@ -19,36 +19,35 @@ const app = express();
 const corsOrigins = process.env.CORS_ORIGINS.split(',');
 
 app.use(cors({
-  origin: corsOrigins,
+  origin: (origin, callback) => {
+    if (!origin || corsOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
 // Helmet security headers
 app.use(
-    helmet({
-      // Content Security Policy (CSP) restricts sources of content like scripts, styles, and images
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'", "http://localhost:5500"],  // Allow frontend domain
-          scriptSrc: ["'self'", "http://localhost:5500"],   // Allow frontend domain for scripts
-          styleSrc: ["'self'", "http://localhost:5500"],    // Allow frontend domain for styles
-          imgSrc: ["'self'", "data:", "http://localhost:5500"],  // Allow frontend domain for images
-          objectSrc: ["'none'"],
-          frameSrc: ["'none'"],
-        },
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'", "http://localhost:5500"],
+        scriptSrc: ["'self'", "http://localhost:5500"],
+        styleSrc: ["'self'", "http://localhost:5500"],
+        imgSrc: ["'self'", "data:", "http://localhost:5500"],
+        connectSrc: ["'self'", "http://localhost:3002"], // Allow API requests
+        objectSrc: ["'none'"],
+        frameSrc: ["'none'"],
       },
-  
-      // HTTP Strict Transport Security (HSTS) forces HTTPS for a specified duration
-      // instead of redirect 301 because the first time it will use http
-     // hsts: {
-     //   maxAge: 31536000,                  // Sets HSTS policy duration to 1 year (in seconds)
-     //   includeSubDomains: true,           // Apply HSTS to all subdomains
-     // },
-     hsts: false, //for development purposes
-      crossOriginOpenerPolicy: { policy: "unsafe-none" },
-      crossOriginResourcePolicy: { policy: "cross-origin" }
-    })
-  );
+    },
+    hsts: false, // Disable for development
+    crossOriginOpenerPolicy: { policy: "unsafe-none" },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
 
 // http actions logged in the terminal  
 app.use(morgan('dev'))
@@ -90,6 +89,9 @@ app.post('/user', createNewUser)
 
 // this logs in the user
 app.post('/login', logIn)
+
+// this logs out the user
+app.post('/logout', logout)
 
 // this fetches the artworks from the db to show them in the dashboard if the user is just a user
 app.get('/artworks', artworksAreFetchedFromDB);

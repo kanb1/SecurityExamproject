@@ -73,12 +73,7 @@ export const logIn = async (req: request, res: response) => {
       
       res.json({
         redirect: '/frontend/src/dashboard.html',
-        user: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-        },
+        message: 'Login successful',
       });
     } catch (error) {
       res.status(500).json({ error: 'Login failed. Please try again.' });
@@ -129,5 +124,22 @@ export const storeUserInDatabase = async (req: request, res: response, next) => 
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
+};
+
+
+// logout
+// logout
+// logout
+
+export const logout = async (req: request, res: response) => {
+  try {
+    // Clear the token cookie
+    res.clearCookie("token");
+    // Return a success message
+    res.json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({ error: "Failed to log out. Please try again." });
+  }
 };
 
