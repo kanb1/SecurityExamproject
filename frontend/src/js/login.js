@@ -36,7 +36,7 @@ async function logIn(event) {
        // }
 
         // Send login data to the backend
-        const response = await fetch('http://localhost:3002/login', {
+        const response = await fetch('http://localhost:3002/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -48,6 +48,7 @@ async function logIn(event) {
         const result = await response.json();
 
         if (response.status !== 200) {
+            console.error('Error response:', result);
             alert(result.error || 'Login failed. Please try again.');
             return;
         }

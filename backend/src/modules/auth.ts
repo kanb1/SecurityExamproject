@@ -20,7 +20,9 @@ export const createJWT = (user) => {
      const token = jwt.sign({ 
         userId: user.id, 
         username: user.username, 
-        role: user.role 
+        role: user.role,
+        email: user.email,
+        profilePicture: user.profilePicture 
     }, 
     process.env.JWT_SECRET, 
     { algorithm: 'HS256', expiresIn: '1h' });

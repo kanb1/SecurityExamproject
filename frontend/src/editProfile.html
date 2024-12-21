@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="./js/editProfile.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/editProfile.css">
+    <title>Edit profile</title>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <ul id="nav-links">
+                <li><a href="http://127.0.0.1:5500/frontend/src/index.html"><strong>Logo</strong></a></li>
+                <li><a href="#"><strong>Documentation</strong></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+
+        <section id="edit-profile-container">
+            <div class="editProfileInfo">
+                <h1 class="userReference">Edit your profile</h1>
+            </div>
+
+            <div id="edit-profile-form">
+                <form id="edit-profile-form">
+                    <label for="profilePicture">Profile picture:</label>
+                    <input type="file" id="profilePicture" name="profilePicture" required><br><br>
+
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required><br><br>
+
+                    <label for="email">Email:</label>
+                    <input disabled type="email" id="email" name="email"><br><br>
+
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="********" required><br><br>
+                    
+                    <label for="confirm-password">Confirm password:</label>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="********" required><br><br>
+                    
+                    <button id="submit-button" type="submit">Save changes</button>
+                </form>
+            </div>
+        </section>
+
+        
+    </main>
+    
+</body>
+</html>

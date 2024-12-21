@@ -6,7 +6,6 @@ import bcrypt from "bcrypt"
 
 
 
-
 export const createNewUser = async (req: request, res: response) => {
 
     // add code to check if user already exists
@@ -24,7 +23,7 @@ export const createNewUser = async (req: request, res: response) => {
 }
 
 
-export const logIn = async (req: request, res: response) => {
+export const login = async (req: request, res: response) => {
     const { email, password } = req.body;
   
     try {
@@ -134,7 +133,12 @@ export const storeUserInDatabase = async (req: request, res: response, next) => 
 export const logout = async (req: request, res: response) => {
   try {
     // Clear the token cookie
-    res.clearCookie("token");
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true, // Ensure this matches how the cookie was set
+      sameSite: 'None', // Ensure this matches how the cookie was set
+      path: '/', // Ensure this matches how the cookie was set
+    });
     // Return a success message
     res.json({ message: "Logged out successfully" });
   } catch (error) {

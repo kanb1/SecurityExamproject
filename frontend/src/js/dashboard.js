@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // Fetch user data securely from the server
-        const response = await fetch('http://localhost:3002/dashboard', { credentials: 'include' });
+        const response = await fetch('http://localhost:3002/api/dashboard', { credentials: 'include' });
 
         if (!response.ok) {
             window.location.href = 'login.html';
@@ -11,15 +11,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const user = await response.json();
-        console.log(user)
 
         // Show role-specific functionality
         const userParagraph = document.querySelector('.userReference');
         userParagraph.textContent = `Welcome home, ${user.role === 'ADMIN' ? 'my god' : 'user peasant'}, ${user.username}!`;
 
+        // users profile picture
+        const profilePicture = document.getElementById('profilePicture'); 
+        profilePicture.classList.add('profilePicture');
+        profilePicture.src = `http://localhost:3002${user.profilePicture}`;
+        console.log(user.profilePicture);
+
+
+        // append btn to this div if user is user
+        const usersDiv = document.querySelector('.users-div');
+
         if (user.role === 'ADMIN') {
             fetchUsers(); // Fetch users only if admin
             fetchArtworks();
+        } else if (user.role === 'USER') {
+            fetchArtworks(); // Fetch artworks only if user
+            document.getElementById('usersH2').textContent = 'Edit profile';
+            const profileBtn = document.createElement('button');
+            profileBtn.textContent = 'Edit';
+            profileBtn.style.cursor = 'pointer';
+            profileBtn.addEventListener('click', () => {
+                window.location.href = 'http://127.0.0.1:5500/frontend/src/editProfile.html'; // Redirect to the editProfile page
+            });
+            usersDiv.appendChild(profileBtn);
+
+        }else {
+            console.error('Unknown role:', user.role);
         }
 
         // Dynamically update the navigation links
@@ -35,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function logout() {
     try {
         // Call the backend to clear the token securely
-        const response = await fetch('http://localhost:3002/logout', { method: 'POST', credentials: 'include' });
+        const response = await fetch('http://localhost:3002/api/logout', { method: 'POST', credentials: 'include' });
 
         if (response.ok) {
             alert("Logged out successfully!");
@@ -57,6 +79,7 @@ function updateNavLinks() {
     const logoutLink = document.createElement('a');
     logoutLink.href = "#";
     logoutLink.textContent = "Logout";
+    logoutLi.classList.add('logout');
     logoutLink.addEventListener('click', function (event) {
         event.preventDefault();
         logout();
@@ -75,7 +98,7 @@ function updateNavLinks() {
 
 async function fetchArtworks() {
     try {
-        const response = await fetch('http://localhost:3002/artworks', {
+        const response = await fetch('http://localhost:3002/api/artworks', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -121,7 +144,7 @@ async function fetchArtworks() {
 
 async function fetchUsers() {
     try {
-        const response = await fetch('http://localhost:3002/admin/users', { credentials: 'include' },
+        const response = await fetch('http://localhost:3002/api/admin/users', { credentials: 'include' },
             {
             method: 'GET',
             headers: {
@@ -133,14 +156,22 @@ async function fetchUsers() {
         }
         const users = await response.json();
         // Display users
-        const usersContainer = document.querySelector('.userList');
+        let usersContainer = document.querySelector('.userList');
+        let deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete user';
+        deleteButton.classList.add('deleteButton');
+
         users.forEach(user => {
-            const userElement = document.createElement('li');
+            let userDiv = document.createElement('div');
+            userDiv.classList.add('userDiv');
+            let userElement = document.createElement('li');
             userElement.classList.add('userLi');
             userElement.textContent = `
                 Username: ${user.username} - Email:  ${user.email} - Role: ${user.role}
             `;
-            usersContainer.appendChild(userElement);
+            userDiv.appendChild(userElement);
+            userDiv.appendChild(deleteButton);
+            usersContainer.appendChild(userDiv);
         });
     }
     catch (error) {

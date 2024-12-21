@@ -1,11 +1,12 @@
 import express from "express";
 import prisma from "./db"
+import path from 'path';
 import {request, response, NextFunction} from "express";
 import router from "./router";
 import morgan from "morgan";
 import cors from "cors";
 import {protect, adminOnly} from "./modules/auth"
-import {createNewUser, logIn, logout, checkEmailExists, storeUserInDatabase} from "./handlers/user"
+import {createNewUser, login, logout, checkEmailExists, storeUserInDatabase} from "./handlers/user"
 import {artworksAreFetchedFromDB} from "./handlers/art"
 import cookieParser from 'cookie-parser';
 import helmet from "helmet";
@@ -15,6 +16,9 @@ import {fetchArt} from "../prisma/seed";
 
 
 const app = express();
+
+// Serve static files from the frontend/assets/images directory
+app.use('/assets/images', express.static(path.join(__dirname, '../../frontend/assets/images')));
 
 const corsOrigins = process.env.CORS_ORIGINS.split(',');
 
@@ -70,7 +74,7 @@ app.use('/api', router)
 
 // this seeds the db with artwork (we should add an admin and stop seeding every time we start the server)
 
-app.get('/', async (req: request, res: response) => {
+app.get('/api', async (req: request, res: response) => {
   try {
     const artworks = await fetchArt();
     res.json(artworks);
@@ -81,30 +85,29 @@ app.get('/', async (req: request, res: response) => {
 });
 
 // this checks if email exists while creating a new user
-app.post("/signup", checkEmailExists, storeUserInDatabase);
+app.post("/api/signup", checkEmailExists, storeUserInDatabase);
 
 // this creates a new user when the above request is successful
-app.post('/user', createNewUser)
-
+app.post('/api/user', createNewUser)
 
 // this logs in the user
-app.post('/login', logIn)
+app.post('/api/login', login)
 
 // this logs out the user
-app.post('/logout', logout)
+app.post('/api/logout', logout)
 
 // this fetches the artworks from the db to show them in the dashboard if the user is just a user
-app.get('/artworks', artworksAreFetchedFromDB);
+app.get('/api/artworks', artworksAreFetchedFromDB);
 
 // check user role when accessing the dashboard
-app.get('/dashboard', protect, (req, res) => {
-  const { id, username, role } = req.user;
+app.get('/api/dashboard', protect, (req, res) => {
+  const { id, username, role, profilePicture } = req.user;
 
   // Return the user's details for the frontend to handle
-  res.json({ id, username, role });
+  res.json({ id, username, role, profilePicture });
 });
 
-app.get('/admin/users', protect, adminOnly, async (req, res) => {
+app.get('/api/admin/users', protect, adminOnly, async (req, res) => {
   try {
       const users = await prisma.user.findMany();
       res.json(users);
@@ -112,5 +115,25 @@ app.get('/admin/users', protect, adminOnly, async (req, res) => {
       res.status(500).json({ message: 'Error fetching users' });
   }
 });
+
+// Route to check user session
+app.get('/api/usersession', protect, (req, res) => {
+  res.status(200).json({ redirect: '/frontend/src/dashboard.html' });
+});
+
+// fetch data to populate edit user profile page
+app.get('/api/userprofile', protect, async (req, res) => {
+  try {
+    const { id, username, role, email, profilePicture } = req.user;
+
+    // Return the user's details for the frontend to handle
+    res.json({ id, username, role, email });
+    
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user profile' });
+  }
+}
+);
+
 
 export default app;

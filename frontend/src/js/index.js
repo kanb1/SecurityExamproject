@@ -46,7 +46,7 @@ async function signUp(event) {
 
         // send user to endpoint
         // if email already exists, "checkEmailExists" will return an error message
-        const response = await fetch('http://localhost:3002/signup', {
+        const response = await fetch('http://localhost:3002/api/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -76,3 +76,27 @@ function sanitizeInput(input) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[match];
     });
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Check if the user is already logged in
+    try{
+        const response = await fetch('http://localhost:3002/api/usersession', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+        const result = await response.json();
+        if (response.status === 200) {
+            window.location.href = result.redirect;
+        }
+    }
+    catch(error){
+        console.error('Error during user session:', error);
+    }
+    }
+);
+    
+
+  
