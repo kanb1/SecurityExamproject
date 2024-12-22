@@ -1,5 +1,40 @@
 "use strict";
 
+// everything related to the 100 most common passwords
+let commonPasswords = new Set();
+
+// Load the common passwords list
+fetch('../common_passwords.json')
+.then(response => response.json())
+.then(data => {
+    commonPasswords = new Set(data);
+    console.log("Common passwords loaded successfully.");
+})
+.catch(error => console.error("Error loading common passwords:", error));
+
+document.addEventListener('DOMContentLoaded', async () => {
+    
+    // Check if the user is already logged in
+    try{
+        const response = await fetch('http://localhost:3002/api/usersession', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+        const result = await response.json();
+        if (response.status === 200) {
+            window.location.href = result.redirect;
+        }
+    }
+    catch(error){
+        console.error('Error during user session:', error);
+    }
+    }
+);
+
+
 async function signUp(event) {
     event.preventDefault(); // Prevent form submission
 
@@ -44,6 +79,12 @@ async function signUp(event) {
             return;
         }
 
+        if (commonPasswords.has(password)) {
+            document.getElementById('password-error').textContent = "Your password is too common. Please choose a stronger password.";
+            document.getElementById('password-error').classList.add('show-error');
+            return;
+        }
+
         // send user to endpoint
         // if email already exists, "checkEmailExists" will return an error message
         const response = await fetch('http://localhost:3002/api/signup', {
@@ -77,26 +118,6 @@ function sanitizeInput(input) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Check if the user is already logged in
-    try{
-        const response = await fetch('http://localhost:3002/api/usersession', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        });
-        const result = await response.json();
-        if (response.status === 200) {
-            window.location.href = result.redirect;
-        }
-    }
-    catch(error){
-        console.error('Error during user session:', error);
-    }
-    }
-);
     
 
   
