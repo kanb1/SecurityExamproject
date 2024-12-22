@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // form to change data
         const form = document.getElementById('edit-profile-form');
+        // profilePicture
+        const profilePicture = document.getElementById('profilePicture');
         // username
         const usernameInput = document.getElementById('username');
         usernameInput.placeholder = user.username;
@@ -25,12 +27,59 @@ document.addEventListener('DOMContentLoaded', async () => {
         const passwordInput = document.getElementById('password');
         passwordInput.placeholder = "Enter new password";
         // confirm password
-        const confirmPasswordInput = document.getElementById('confirm-password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
         confirmPasswordInput.placeholder = "Confirm new password";
 
-        // submit button
-        const submitButton = document.getElementById('submit-button');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            // create a new FormData object
+            const sendTheData = new FormData(e.target);
+            // get the new data
+            const newProfilePicture = profilePicture.value;
+            const newUsername = usernameInput.value;
+            const newPassword = passwordInput.value;
+            const newConfirmPassword = confirmPasswordInput.value;
+            // check if the password and confirm password are the same
+            if (newPassword !== newConfirmPassword) {
+                alert("Passwords do not match");
+                return;
+            }
+            // check if the username is empty
+            if (newUsername === "") {
+                alert("Username cannot be empty");
+                return;
+            }
+            
+            // check if the password is empty
+            if (newPassword === "") {
+                alert("Password cannot be empty");
+                return;
+            }
 
+            // check if the Confirmpassword is empty
+            if (newConfirmPassword === "") {
+                alert("Password cannot be empty");
+                return;
+            }
+
+
+            // send the new data to the server
+            const response = await fetch('http://localhost:3002/api/userprofile/edit', {
+                method: 'PUT',
+                body: sendTheData,
+                credentials: 'include'
+            });
+            if (response.ok) {
+                alert("Profile updated successfully");
+                window.location.href = "dashboard.html";
+            }
+            else {
+                alert("Profile update failed. Please try again.");
+            }
+        });
+
+        
 
         // Dynamically update the navigation links
         updateNavLinks();

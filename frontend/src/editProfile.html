@@ -22,11 +22,11 @@
 
         <section id="edit-profile-container">
             <div class="editProfileInfo">
-                <h1 class="userReference">Edit your profile</h1>
+                <h1 class="mainTitle">Edit your profile</h1>
             </div>
 
-            <div id="edit-profile-form">
-                <form id="edit-profile-form">
+            <div id="edit-profile-form-div">
+                <form id="edit-profile-form" enctype="multipart/form-data">
                     <label for="profilePicture">Profile picture:</label>
                     <input type="file" id="profilePicture" name="profilePicture" required><br><br>
 
@@ -40,7 +40,7 @@
                     <input type="password" id="password" name="password" placeholder="********" required><br><br>
                     
                     <label for="confirm-password">Confirm password:</label>
-                    <input type="password" id="confirm-password" name="confirm-password" placeholder="********" required><br><br>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="********" required><br><br>
                     
                     <button id="submit-button" type="submit">Save changes</button>
                 </form>

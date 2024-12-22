@@ -4,11 +4,12 @@ import path from 'path';
 import {request, response, NextFunction} from "express";
 import morgan from "morgan";
 import cors from "cors";
-import {protect, adminOnly} from "./modules/auth"
+import {protect, adminOnly, hashPassword} from "./modules/auth"
 import {createNewUser, login, logout, checkEmailExists, storeUserInDatabase} from "./handlers/user"
 import {artworksAreFetchedFromDB} from "./handlers/art"
 import cookieParser from 'cookie-parser';
 import helmet from "helmet";
+import multer from "multer";
 
 
 import {fetchArt} from "../prisma/seed";
@@ -64,6 +65,17 @@ app.use(express.urlencoded({extended: true}))
 // makes cookie an object innstead of a string to be split
 app.use(cookieParser());
 
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../../frontend/assets/images'));
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+const upload = multer({ storage });
 
 // we are currently only using these routes below
 // we are currently only using these routes below
@@ -157,6 +169,64 @@ app.get('/api/userprofile', protect, async (req, res) => {
   }
 }
 );
+
+// user can edit their profile
+app.put('/api/userprofile/edit', protect, upload.single('profilePicture'), async (req: request, res: response) => {
+  try {
+
+    const { userId } = req.user;
+    const { username, password, confirmPassword } = req.body;
+    const newProfilePicture = req.file ? `/assets/images/${req.file.filename}` : req.user.profilePicture;
+
+    // Check if the new username is already taken
+    const existingUser = await prisma.user.findUnique({
+      where: { username: username },
+    });
+    if (existingUser){
+      return res.status(400).json({ message: 'Username already taken' });
+    } else{
+      console.log('Username is available');
+    }
+    // check if password and confirm password match
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    } else {
+      console.log('Passwords match');
+    }
+    // check if password meets requirements
+    const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).{8,}$/;
+    if (!passwordPattern.test(password)) {
+      // tell user password requirements
+      return res.status(400).json({ message: 'Password must be at least 8 characters long and contain at least one number, one uppercase letter, one lowercase letter, and one special character' });
+    } else{
+      console.log('Password meets requirements');
+    }
+
+    // update the users profile with new profile picture, username, and password
+    console.log('Preparing to update user profile...');
+
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          profilePicture: newProfilePicture,
+          username: username,
+          password: await hashPassword(password),
+        },
+      });
+      console.log('Updated user:', updatedUser);
+      res.json({ message: 'User profile updated successfully' });
+      //send new user data to the frontend
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('Error during user update:', error);
+      return res.status(500).json({ message: 'Database update failed' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating user profile' });
+  }
+});
+
 
 
 export default app;

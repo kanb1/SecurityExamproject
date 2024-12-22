@@ -9,7 +9,10 @@ import bcrypt from "bcrypt"
 export const createNewUser = async (req: request, res: response) => {
 
     // add code to check if user already exists
-    
+
+    // add code to do backend validation
+
+    // create user    
     const user = await prisma.user.create({
         data: {
             username: req.body.username,
