@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const user = await response.json();
+        console.log(user);
 
         // Show role-specific functionality
         const userParagraph = document.querySelector('.userReference');
@@ -28,9 +29,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (user.role === 'ADMIN') {
             fetchUsers(); // Fetch users only if admin
-            fetchArtworks();
+            fetchArtworks(user.role);
         } else if (user.role === 'USER') {
-            fetchArtworks(); // Fetch artworks only if user
+            fetchArtworks(user.role); // Fetch artworks only if user
             document.getElementById('usersH2').textContent = 'Edit profile';
             const profileBtn = document.createElement('button');
             profileBtn.textContent = 'Edit';
@@ -96,7 +97,7 @@ function updateNavLinks() {
 
 // if user is user, fetch artworks
 
-async function fetchArtworks() {
+async function fetchArtworks(role) {
     try {
         const response = await fetch('http://localhost:3002/api/artworks', {
             method: 'GET',
@@ -126,19 +127,22 @@ async function fetchArtworks() {
             artworkTechnique.textContent = `Technique: ${artwork.technique}`;
             const artworkYear = document.createElement('p');
             artworkYear.textContent = `Production: ${artwork.production_date}`;
-            // create delete artwork button
-            let deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete artwork';
-            deleteButton.classList.add('deleteButton');
-            deleteButton.addEventListener('click', () => {
-                deleteArtwork(artwork.id);
-            });
+
+            // create delete artwork button if user is admin
+            if (role === 'ADMIN') {
+                let deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete artwork';
+                deleteButton.classList.add('deleteButton');
+                deleteButton.addEventListener('click', () => {
+                    deleteArtwork(artwork.id);
+                });
+                artworkElement.appendChild(deleteButton);
+            }
 
             artworkElement.appendChild(artworkImage)
             artworkElement.appendChild(artworkTitle);
             artworkElement.appendChild(artworkTechnique);
             artworkElement.appendChild(artworkYear);
-            artworkElement.appendChild(deleteButton);
 
             
             artworksList.appendChild(artworkElement);
