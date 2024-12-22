@@ -126,6 +126,19 @@ app.delete('/api/admin/users/:id', protect, adminOnly, async (req, res) => {
   }
 });
 
+// admin can delete an artwork from issue #27
+app.delete('/api/admin/artworks/:id', protect, adminOnly, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.artwork.delete({
+      where: { id: id },
+    });
+    res.json({ message: 'Artwork deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting artwork' });
+  }
+});
+
 // Route to check user session
 app.get('/api/usersession', protect, (req, res) => {
   res.status(200).json({ redirect: '/frontend/src/dashboard.html' });

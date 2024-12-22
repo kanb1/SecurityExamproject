@@ -126,11 +126,20 @@ async function fetchArtworks() {
             artworkTechnique.textContent = `Technique: ${artwork.technique}`;
             const artworkYear = document.createElement('p');
             artworkYear.textContent = `Production: ${artwork.production_date}`;
+            // create delete artwork button
+            let deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete artwork';
+            deleteButton.classList.add('deleteButton');
+            deleteButton.addEventListener('click', () => {
+                deleteArtwork(artwork.id);
+            });
 
             artworkElement.appendChild(artworkImage)
             artworkElement.appendChild(artworkTitle);
             artworkElement.appendChild(artworkTechnique);
             artworkElement.appendChild(artworkYear);
+            artworkElement.appendChild(deleteButton);
+
             
             artworksList.appendChild(artworkElement);
         });
@@ -204,8 +213,36 @@ async function deleteUser(id) {
         // Display users
         let usersContainer = document.querySelector('.userList');
         usersContainer.innerHTML = '';
+        usersContainer.replaceChildren();
         // fetch users again
         await fetchUsers();
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
+
+// create a function that will delete an artwork
+// create a function that will delete a user
+async function deleteArtwork(id) {
+    try {
+        const response = await fetch(`http://localhost:3002/api/admin/artworks/${id}`,
+            {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            throw new Error('Failed to delete artwork');
+        }
+        
+        // Display artworks
+        let artworksContainer = document.querySelector('.artworkList');
+        artworksContainer.replaceChildren();
+        // fetch artworks again
+        await fetchArtworks();
     }
     catch (error) {
         console.error(error);
