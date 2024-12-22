@@ -113,7 +113,7 @@ app.get('/api/admin/users', protect, adminOnly, async (req, res) => {
   }
 });
 
-// admin can delete a user
+// admin can delete a user from issue #26
 app.delete('/api/admin/users/:id', protect, adminOnly, async (req, res) => {
   const { id } = req.params;
   try {
