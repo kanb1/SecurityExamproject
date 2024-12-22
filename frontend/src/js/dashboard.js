@@ -157,22 +157,55 @@ async function fetchUsers() {
         const users = await response.json();
         // Display users
         let usersContainer = document.querySelector('.userList');
-        let deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete user';
-        deleteButton.classList.add('deleteButton');
 
-        users.forEach(user => {
+        users.forEach(fetchedUser => {
             let userDiv = document.createElement('div');
             userDiv.classList.add('userDiv');
             let userElement = document.createElement('li');
             userElement.classList.add('userLi');
             userElement.textContent = `
-                Username: ${user.username} - Email:  ${user.email} - Role: ${user.role}
+                Username: ${fetchedUser.username} - Email:  ${fetchedUser.email} - Role: ${fetchedUser.role}
             `;
             userDiv.appendChild(userElement);
-            userDiv.appendChild(deleteButton);
+            
+            if (fetchedUser.role !== 'ADMIN') {
+                // only add the delete button if the user is NOT an admin
+                let deleteButton = document.createElement('button');
+                deleteButton.addEventListener('click', () => {
+                    deleteUser(fetchedUser.id);
+                });
+                deleteButton.textContent = 'Delete user';
+                deleteButton.classList.add('deleteButton');
+                userDiv.appendChild(deleteButton);
+            }
             usersContainer.appendChild(userDiv);
         });
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
+
+// create a function that will delete a user
+async function deleteUser(id) {
+    try {
+        const response = await fetch(`http://localhost:3002/api/admin/users/${id}`,
+            {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            throw new Error('Failed to delete user');
+        }
+        
+        // Display users
+        let usersContainer = document.querySelector('.userList');
+        usersContainer.innerHTML = '';
+        // fetch users again
+        await fetchUsers();
     }
     catch (error) {
         console.error(error);

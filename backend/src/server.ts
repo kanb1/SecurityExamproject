@@ -2,7 +2,6 @@ import express from "express";
 import prisma from "./db"
 import path from 'path';
 import {request, response, NextFunction} from "express";
-import router from "./router";
 import morgan from "morgan";
 import cors from "cors";
 import {protect, adminOnly} from "./modules/auth"
@@ -66,8 +65,6 @@ app.use(express.urlencoded({extended: true}))
 app.use(cookieParser());
 
 
-app.use('/api', router)
-
 // we are currently only using these routes below
 // we are currently only using these routes below
 // we are currently only using these routes below
@@ -113,6 +110,19 @@ app.get('/api/admin/users', protect, adminOnly, async (req, res) => {
       res.json(users);
   } catch (error) {
       res.status(500).json({ message: 'Error fetching users' });
+  }
+});
+
+// admin can delete a user
+app.delete('/api/admin/users/:id', protect, adminOnly, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.user.delete({
+      where: { id: id },
+    });
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting user' });
   }
 });
 
